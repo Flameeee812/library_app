@@ -91,6 +91,12 @@ def delete_book(connection, book_id: str) -> bool:
         if utils.is_book_id_digit(book_id):
             cursor = connection.cursor()
 
+            cursor.execute("SELECT 1 FROM Library WHERE book_id == ?", (book_id,))
+            if cursor.fetchone() is None:
+                print(f"Книги с ID {book_id} нет в библиотеке.")
+                log.db_logger.exception(f"Ошибка при удалении книги: Книги с ID {book_id} нет в библиотеке.")
+                return False
+
             cursor.execute("DELETE FROM Library WHERE book_id = ?", (book_id,))
             connection.commit()
             log.db_logger.info(f"Данные книги с ID {book_id} удалены.")
