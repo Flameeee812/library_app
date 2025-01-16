@@ -29,7 +29,7 @@ def get_connection(path):
         return connection
 
     except sql.Error as e:
-        print(f"Ошибка при подключении к базе данных: {e}")
+        print("Ошибка при подключении к базе данных.")
         log.db_logger.exception(f"Ошибка при подключении к БД: {e}")
 
         return None
@@ -44,7 +44,8 @@ def close_connection(connection):
         log.db_logger.info("База данных закрыта.")
 
     except sql.Error as e:
-        print(f"Ошибка при закрытии соединения с базой данных: {e}")
+        print("Ошибка при закрытии соединения с базой данных.")
+        log.db_logger.exception(f"Ошибка при закрытии базы данных: {e}")
 
     return None
 
@@ -70,13 +71,11 @@ def add_book(connection, title: str, author: str, year: str) -> str | None:
             book_id = cursor.lastrowid
             return book_id
 
-        return None
-
     except sql.Error as e:
-        print(f"Ошибка при добавлении книги: {e}")
+        print("Ошибка при добавлении книги.")
         log.db_logger.exception(f"Ошибка при добавлении книги: {e}")
 
-        return None
+    return None
 
 
 def delete_book(connection, book_id: str) -> bool:
@@ -106,8 +105,8 @@ def delete_book(connection, book_id: str) -> bool:
         return False
 
     except sql.Error as e:
-        print(f"Ошибка при удалении книги: {e}")
-        log.db_logger.exception("Ошибка при удалении книги.")
+        print("Ошибка при удалении книги.")
+        log.db_logger.exception(f"Ошибка при удалении книги: {e}")
 
         return False
 
@@ -132,13 +131,11 @@ def get_book(connection, book_id: str) -> tuple | None:
 
             return book
 
-        return None
-
     except sql.Error as e:
-        print(f"Ошибка при закрытии соединения с базой данных: {e}")
-        log.db_logger.exception("Ошибка при получении данных о книге.")
+        print("Ошибка при закрытии соединения с базой данных.")
+        log.db_logger.exception(f"Ошибка при получении данных о книге: {e}")
 
-        return None
+    return None
 
 
 def get_books(connection) -> list:
@@ -157,7 +154,7 @@ def get_books(connection) -> list:
         return library
 
     except sql.Error as e:
-        print(f"Ошибка при получении списка книг: {e}")
+        print(f"Ошибка при получении списка книг.")
         log.db_logger.exception(f"Ошибка при получении списка книг: {e}")
 
         return []
@@ -184,10 +181,12 @@ def update_status(connection, book_id: str, status: str) -> bool:
 
                 return True
 
+            log.db_logger.exception("Ошибка попытке обновить статус книги.")
+
         return False
 
     except sql.Error as e:
-        print(f"Ошибка при обновлении статуса книги: {e}")
-        log.db_logger.exception("Ошибка попытке обновить статус книги.")
+        print("Ошибка при обновлении статуса книги.")
+        log.db_logger.exception(f"Ошибка попытке обновить статус книги: {e}")
 
         return False
